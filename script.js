@@ -4,7 +4,7 @@
    ========================================================= */
 
 const CONFIG = {
-    graduateName: "Trần Thị Hiền Dịu",
+    graduateName: "Hiền Dịu",
 
     // Vietnam time (+07:00) so the countdown is correct for guests anywhere
     graduationDate: "2026-10-15T08:30:00+07:00",
@@ -14,23 +14,29 @@ const CONFIG = {
     mapUrl: "https://www.google.com/maps/search/?api=1&query=" +
         encodeURIComponent("Trường Đại học Kinh doanh và Công nghệ Hà Nội, 29A Ngõ 124 Vĩnh Tuy, Hà Nội"),
 
-    music: "music/background.mp3",
+    music: "music/22.mp3",
+    musicStart: 10, // seconds — music starts (and loops back) here
 
-    // Shown when ?p= is missing or not in the guest list
+    // Used when ?p= is missing, not in the guest list, or the guest has no photo
     defaultGuest: "Bạn",
+    defaultPhoto: "images/default.jpeg",
 
     // Gallery photos (paths relative to index.html).
     // Leave empty to hide the gallery, e.g. ["images/gallery-1.jpg", "images/gallery-2.jpg"]
     gallery: []
 };
 
-// Guest list: URL code → name shown on the invitation.
-// Example link: https://your-site.vercel.app/?p=dieu-linh
+// Guest list: URL code → name + photo shown on the invitation.
+// Example link: https://your-site.vercel.app/?p=ha-linh
+// `photo` is optional — leave it out to use CONFIG.defaultPhoto.
 const guests = {
-    "dieu-linh": "Bạn Diệu Linh",
-    "ngoc-anh": "Bạn Ngọc Anh",
-    "minh": "Bạn Minh",
-    "thanh": "Bạn Thanh"
+    "bon-li-va-em-trang":     { name: "Bôn lì và em Trang",       photo: "images/bon-li-va-em-trang.jpeg" },
+    "ha-linh":                { name: "Bạn Hà Linh",              photo: "images/ha-linh.jpeg" },
+    "thanh-nga":              { name: "Bạn Thanh Nga",            photo: "images/thanh-nga.jpeg" },
+    "bay-bi-chi-cua-anh-loi": { name: "Bây bi chi của anh Lợi",   photo: "images/bay-bi-chi-cua-anh-loi.jpeg" },
+    "du-bac-bling":           { name: "Du Bắc Bling",             photo: "images/du-bac-bling.jpeg" },
+    "em-huyen":               { name: "Em Huyền" },
+    "em-nhi":                 { name: "Em Nhi" }
 };
 
 /* ========================================================= */
@@ -47,14 +53,24 @@ function getGuest() {
     // hasOwnProperty guards against codes like "constructor" or "toString"
     const known = code !== "" && Object.prototype.hasOwnProperty.call(guests, code);
 
+    const entry = known ? guests[code] : {};
+
     return {
         known,
-        name: known ? guests[code] : CONFIG.defaultGuest
+        name: entry.name || CONFIG.defaultGuest,
+        photo: entry.photo || CONFIG.defaultPhoto
     };
 }
 
 function applyGuest(guest) {
     $("#guest-name").textContent = guest.name;
+
+    // Guest photo in the arch; fall back to the default photo if it fails to load
+    const photo = $("#hero-photo");
+    photo.addEventListener("error", () => {
+        if (!photo.src.endsWith(CONFIG.defaultPhoto)) photo.src = CONFIG.defaultPhoto;
+    });
+    photo.src = guest.photo;
 
     if (guest.known) {
         document.title = `Trân trọng kính mời ${guest.name} | Graduation 2026`;
@@ -226,6 +242,11 @@ const Lightbox = (() => {
 const Music = (() => {
     const audio = $("#bg-music");
     const btn = $("#music-btn");
+    const hint = $("#music-hint");
+    const start = CONFIG.musicStart || 0;
+    const gestures = ["click", "touchend", "keydown"];
+    let userPaused = false;        // the guest turned music off with the ♫ button
+    let gestureListening = false;  // still waiting for the first interaction
     let resumeOnVisible = false;
 
     function setPlayingUI(playing) {
@@ -235,29 +256,65 @@ const Music = (() => {
     }
 
     function play() {
-        if (!audio.src) audio.src = CONFIG.music;
+        // #t= media fragment makes the browser start at `start` seconds
+        if (!audio.src) audio.src = start ? `${CONFIG.music}#t=${start}` : CONFIG.music;
         // play() returns a promise that rejects if the browser blocks playback
         const attempt = audio.play();
         if (attempt && typeof attempt.catch === "function") {
-            attempt.catch(() => setPlayingUI(false));
+            attempt.catch(() => {
+                setPlayingUI(false);
+                // Autoplay blocked → nudge the guest (only before any interaction)
+                if (!userPaused && gestureListening) hint.hidden = false;
+            });
         }
     }
 
-    function toggle() {
-        if (audio.paused) play();
-        else audio.pause();
+    // Browsers block sound until the first user interaction,
+    // so retry on the first tap/click/key anywhere on the page.
+    function onFirstGesture(e) {
+        if (btn.contains(e.target)) return; // the ♫ button handles itself
+        removeGestureListeners();
+        if (!userPaused && audio.paused) play();
     }
 
-    audio.addEventListener("play", () => setPlayingUI(true));
+    function removeGestureListeners() {
+        gestureListening = false;
+        gestures.forEach((type) => document.removeEventListener(type, onFirstGesture, true));
+    }
+
+    btn.addEventListener("click", () => {
+        removeGestureListeners();
+        hint.hidden = true;
+        userPaused = !audio.paused;
+        if (audio.paused) play();
+        else audio.pause();
+    });
+
+    // Fallback for browsers that ignore #t=
+    audio.addEventListener("loadedmetadata", () => {
+        if (audio.currentTime < start) audio.currentTime = start;
+    }, { once: true });
+
+    // Loop back to `start` instead of 0 to skip the intro
+    audio.addEventListener("ended", () => {
+        audio.currentTime = start;
+        play();
+    });
+
+    audio.addEventListener("play", () => {
+        removeGestureListeners();
+        hint.hidden = true;
+        setPlayingUI(true);
+    });
     audio.addEventListener("pause", () => setPlayingUI(false));
 
     // File missing or unsupported → hide the button quietly
     audio.addEventListener("error", () => {
+        removeGestureListeners();
+        hint.hidden = true;
         setPlayingUI(false);
         btn.hidden = true;
     });
-
-    btn.addEventListener("click", toggle);
 
     // Pause when the tab/app goes to background, resume when back
     document.addEventListener("visibilitychange", () => {
@@ -270,9 +327,16 @@ const Music = (() => {
     });
 
     return {
-        start() {
+        // Called on page load: show the button and try to autoplay
+        init() {
             btn.hidden = false;
+            gestureListening = true;
+            gestures.forEach((type) => document.addEventListener(type, onFirstGesture, true));
             play();
+        },
+        // Called when the card is opened (a user gesture, so play is allowed)
+        ensurePlaying() {
+            if (!userPaused && audio.paused) play();
         }
     };
 })();
@@ -495,8 +559,8 @@ function openInvitation() {
     cover.classList.add("is-opening");
     invitation.setAttribute("aria-hidden", "false");
 
-    // Must be called inside the click handler so browsers allow playback
-    Music.start();
+    // Inside the click handler, so browsers allow playback
+    Music.ensurePlaying();
 
     const duration = prefersReducedMotion ? 0 : 1800;
 
@@ -520,6 +584,7 @@ function init() {
     buildGallery();
     startCountdown();
     startParticles();
+    Music.init();
 
     $("#open-btn").addEventListener("click", openInvitation, { once: true });
 }

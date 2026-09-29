@@ -12,11 +12,13 @@
     --gold: #b0915a;
     --gold-deep: #8f7442;
     --gold-light: #dcc9a2;
+    --gold-rich: #a57d36;
     --line: rgba(176, 145, 90, 0.38);
 
     --gold-gradient: linear-gradient(135deg, #8f7442 0%, #c9ad74 45%, #e3d1a8 55%, #a88a52 100%);
 
     --serif: "Cormorant Garamond", "Times New Roman", serif;
+    --script: "Great Vibes", "Cormorant Garamond", cursive;
     --sans: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
 
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -415,24 +417,20 @@ button {
 }
 
 .hero__name {
-    margin-top: 16px;
-    font-family: var(--serif);
+    margin-top: 14px;
+    font-family: var(--script);
     font-weight: 400;
-    font-size: clamp(28px, 8.4vw, 44px);
+    font-size: clamp(52px, 16vw, 84px);
     line-height: 1.2;
+    color: var(--gold-rich);
+    text-shadow: 0 2px 22px rgba(176, 145, 90, 0.28);
     white-space: nowrap;
-}
-
-.hero__name em {
-    font-style: italic;
-    font-weight: 300;
-    color: var(--gold-deep);
 }
 
 /* Arched portrait with an offset gold outline */
 .arch {
     position: relative;
-    width: min(72vw, 320px);
+    width: min(83vw, 368px);
     aspect-ratio: 3 / 4;
     margin: 40px auto 0;
 }
@@ -771,6 +769,44 @@ button {
 
 .music-btn.is-playing .music-btn__icon {
     animation: sway 3s ease-in-out infinite;
+}
+
+/* "Chạm để bật nhạc" pill beside the ♫ button while autoplay is blocked */
+.music-hint {
+    position: fixed;
+    right: 78px;
+    bottom: calc(29px + var(--safe-bottom));
+    z-index: 120;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255, 253, 249, 0.85);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+    color: var(--gold-deep);
+    pointer-events: none;
+    animation: fadeIn 0.8s var(--ease) 1.4s both, breathe 2.4s ease-in-out 2.2s infinite;
+}
+
+.music-hint::after {
+    content: "";
+    position: absolute;
+    right: -5px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-top: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    background: inherit;
+    transform: translateY(-50%) rotate(45deg);
+}
+
+@keyframes breathe {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
 }
 
 @keyframes pulse {
