@@ -29,12 +29,14 @@ const CONFIG = {
 // Guest list: URL code → name + photo shown on the invitation.
 // Example link: https://your-site.vercel.app/?p=ha-linh
 // `photo` is optional — leave it out to use CONFIG.defaultPhoto.
+// `frame: "rounded"` shows the whole photo with softly rounded corners instead of the arch.
 const guests = {
     "bon-li-va-em-trang":     { name: "Bôn lì và em Trang",       photo: "images/bon-li-va-em-trang.jpeg" },
     "ha-linh":                { name: "Bạn Hà Linh",              photo: "images/ha-linh.jpeg" },
     "thanh-nga":              { name: "Bạn Thanh Nga",            photo: "images/thanh-nga.jpeg" },
     "bay-bi-chi-cua-anh-loi": { name: "Bây bi chi của anh Lợi",   photo: "images/bay-bi-chi-cua-anh-loi.jpeg" },
     "du-bac-bling":           { name: "Du Bắc Bling",             photo: "images/du-bac-bling.jpeg" },
+    "gia-dinh":               { name: "Gia đình",                 photo: "images/gia-dinh.jpeg", frame: "rounded" },
     "em-huyen":               { name: "Em Huyền" },
     "em-nhi":                 { name: "Em Nhi" }
 };
@@ -58,7 +60,8 @@ function getGuest() {
     return {
         known,
         name: entry.name || CONFIG.defaultGuest,
-        photo: entry.photo || CONFIG.defaultPhoto
+        photo: entry.photo || CONFIG.defaultPhoto,
+        frame: entry.frame || "arch"
     };
 }
 
@@ -71,6 +74,7 @@ function applyGuest(guest) {
         if (!photo.src.endsWith(CONFIG.defaultPhoto)) photo.src = CONFIG.defaultPhoto;
     });
     photo.src = guest.photo;
+    photo.closest(".arch").classList.toggle("arch--rounded", guest.frame === "rounded");
 
     if (guest.known) {
         document.title = `Trân trọng kính mời ${guest.name} | Graduation 2026`;

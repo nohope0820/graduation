@@ -455,6 +455,20 @@ button {
     background: var(--bg-deep);
 }
 
+/* Rounded variant: whole photo at its natural ratio, soft corners (per-guest `frame: "rounded"`) */
+.arch--rounded {
+    aspect-ratio: auto;
+}
+
+.arch--rounded img {
+    height: auto;
+    border-radius: 10px;
+}
+
+.arch--rounded::before {
+    border-radius: 16px;
+}
+
 /* ---------- Invitation ---------- */
 
 .invite {
