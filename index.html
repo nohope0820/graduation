@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#f7f3ec">
+
+    <!-- Default title; script.js personalizes it based on ?p= -->
+    <title>Graduation Invitation | Trần Thị Hiền Dịu</title>
+
+    <!-- SEO / Social preview.
+         Social crawlers do not run JavaScript, so these stay generic.
+         Replace og:image / og:url with your absolute domain after deploying. -->
+    <meta name="description" content="Thiệp mời tham dự lễ tốt nghiệp của Trần Thị Hiền Dịu — 8:30, ngày 15.10.2026, tại Trường Đại học Kinh doanh và Công nghệ Hà Nội.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="vi_VN">
+    <meta property="og:title" content="Graduation Invitation | Trần Thị Hiền Dịu">
+    <meta property="og:description" content="Trân trọng kính mời bạn đến chung vui trong lễ tốt nghiệp của mình — 8:30, 15.10.2026.">
+    <meta property="og:image" content="images/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎓%3C/text%3E%3C/svg%3E">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="is-locked">
+
+    <!-- Ambient gold dust (decorative) -->
+    <canvas id="particles" class="particles" aria-hidden="true"></canvas>
+    <!-- Confetti bursts (decorative) -->
+    <canvas id="confetti" class="confetti" aria-hidden="true"></canvas>
+
+    <!-- ============ COVER ============ -->
+    <section id="cover" class="cover" aria-label="Bìa thiệp">
+        <div class="cover__panel cover__panel--left"></div>
+        <div class="cover__panel cover__panel--right"></div>
+
+        <div class="cover__frame" aria-hidden="true"></div>
+
+        <div class="cover__content">
+            <p class="eyebrow cover__eyebrow">Graduation</p>
+            <p class="cover__year">2026</p>
+            <span class="ornament" aria-hidden="true"></span>
+            <h1 class="cover__name">Trần Thị Hiền Dịu</h1>
+            <p class="cover__date">15 . 10 . 2026</p>
+
+            <!-- Filled by JS only when the guest is recognised -->
+            <p id="cover-guest" class="cover__guest" hidden></p>
+
+            <button id="open-btn" class="btn btn--primary cover__btn" type="button">
+                <span>Mở thiệp</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- ============ MAIN INVITATION ============ -->
+    <main id="invitation" class="invitation" aria-hidden="true">
+
+        <!-- Hero -->
+        <section class="section hero">
+            <p class="eyebrow" data-reveal>The Graduation of</p>
+            <h2 class="hero__name" data-reveal style="--delay: .15s">
+                Trần Thị <em>Hiền Dịu</em>
+            </h2>
+
+            <figure class="arch" data-reveal="image" style="--delay: .3s">
+                <img src="images/portrait.jpg" alt="Trần Thị Hiền Dịu trong lễ phục tốt nghiệp" width="1227" height="1023">
+            </figure>
+        </section>
+
+        <!-- Invitation -->
+        <section class="section invite">
+            <p class="eyebrow" data-reveal>Trân trọng kính mời</p>
+
+            <!-- Guest name is injected by script.js — never hard-code it here -->
+            <h2 id="guest-name" class="invite__guest" data-reveal style="--delay: .15s"></h2>
+
+            <span class="ornament" data-reveal style="--delay: .3s" aria-hidden="true"></span>
+
+            <div class="invite__text" data-reveal style="--delay: .4s">
+                <p>Có những cột mốc chỉ đến một lần trong đời.</p>
+                <p>Và mình rất vui nếu bạn có thể đến chung vui cùng mình trong ngày đặc biệt này.</p>
+            </div>
+        </section>
+
+        <!-- Ceremony details + countdown -->
+        <section class="section ceremony">
+            <div class="card" data-reveal>
+                <p class="eyebrow">The Graduation Ceremony</p>
+
+                <div class="date">
+                    <span class="date__side">Thứ Năm</span>
+                    <span class="date__day">15</span>
+                    <span class="date__side">08:30</span>
+                </div>
+                <p class="date__month">Tháng 10 · 2026</p>
+
+                <div class="countdown" aria-live="polite">
+                    <div id="countdown-grid" class="countdown__grid">
+                        <div class="countdown__item"><span id="cd-days" class="countdown__num">00</span><span class="countdown__label">Days</span></div>
+                        <div class="countdown__item"><span id="cd-hours" class="countdown__num">00</span><span class="countdown__label">Hours</span></div>
+                        <div class="countdown__item"><span id="cd-minutes" class="countdown__num">00</span><span class="countdown__label">Minutes</span></div>
+                        <div class="countdown__item"><span id="cd-seconds" class="countdown__num">00</span><span class="countdown__label">Seconds</span></div>
+                    </div>
+                    <p id="countdown-done" class="countdown__done" hidden>The day has arrived ✨</p>
+                </div>
+
+                <span class="ornament" aria-hidden="true"></span>
+
+                <!-- Venue text is injected from CONFIG in script.js -->
+                <p id="venue-name" class="venue__name"></p>
+                <p id="venue-address" class="venue__address"></p>
+
+                <a id="map-btn" class="btn btn--outline" href="#" target="_blank" rel="noopener">
+                    <span aria-hidden="true">📍</span> Xem bản đồ
+                </a>
+            </div>
+        </section>
+
+        <!-- Gallery — shown only when CONFIG.gallery has photos -->
+        <section id="gallery" class="section gallery" hidden>
+            <p class="eyebrow" data-reveal>A few memories</p>
+            <div id="gallery-grid" class="gallery__grid"></div>
+        </section>
+
+        <!-- Footer / Thank you -->
+        <footer id="thanks" class="section thanks">
+            <p class="thanks__title" data-reveal>Thank you</p>
+            <p class="thanks__see" data-reveal style="--delay: .1s">See you on my special day ♡</p>
+
+            <p class="thanks__name" data-reveal style="--delay: .2s">Trần Thị Hiền Dịu · 2026</p>
+        </footer>
+    </main>
+
+    <!-- ============ FLOATING MUSIC BUTTON ============ -->
+    <button id="music-btn" class="music-btn" type="button" aria-label="Bật nhạc nền" aria-pressed="false" hidden>
+        <span class="music-btn__icon" aria-hidden="true">♫</span>
+    </button>
+    <audio id="bg-music" loop preload="none"></audio>
+
+    <!-- ============ LIGHTBOX ============ -->
+    <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Xem ảnh" hidden>
+        <button class="lightbox__btn lightbox__close" type="button" aria-label="Đóng">&times;</button>
+        <button class="lightbox__btn lightbox__prev" type="button" aria-label="Ảnh trước">&#8249;</button>
+        <figure class="lightbox__figure">
+            <img id="lightbox-img" src="" alt="">
+        </figure>
+        <button class="lightbox__btn lightbox__next" type="button" aria-label="Ảnh sau">&#8250;</button>
+        <p id="lightbox-counter" class="lightbox__counter"></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
