@@ -37,6 +37,7 @@ const guests = {
     "bay-bi-chi-cua-anh-loi": { name: "Bây bi chi của anh Lợi",   photo: "images/bay-bi-chi-cua-anh-loi.jpeg" },
     "du-bac-bling":           { name: "Du Bắc Bling",             photo: "images/du-bac-bling.jpeg" },
     "gia-dinh":               { name: "Gia đình",                 photo: "images/gia-dinh.jpeg", frame: "rounded" },
+    "me-con-lvy":             { name: "2 mẹ con Ivy",             photo: "images/me-con-lvy.jpeg" },
     "em-huyen":               { name: "Em Huyền" },
     "em-nhi":                 { name: "Em Nhi" }
 };
