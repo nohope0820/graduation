@@ -406,7 +406,7 @@ function startParticles() {
 
     function drawSparkle(x, y, r, alpha) {
         const s = r * 3.2;
-        ctx.fillStyle = `rgba(201, 173, 116, ${alpha})`;
+        ctx.fillStyle = `rgba(236, 210, 150, ${alpha})`;
         ctx.beginPath();
         ctx.moveTo(x, y - s);
         ctx.quadraticCurveTo(x, y, x + s, y);
@@ -432,7 +432,7 @@ function startParticles() {
                 if (p.sparkle) {
                     drawSparkle(p.x, p.y, p.r, Math.max(alpha, 0.08));
                 } else {
-                    ctx.fillStyle = `rgba(176, 145, 90, ${Math.max(alpha, 0.06)})`;
+                    ctx.fillStyle = `rgba(214, 185, 124, ${Math.max(alpha, 0.06)})`;
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
                     ctx.fill();
@@ -448,7 +448,7 @@ function startParticles() {
 /* ---------- Confetti ---------- */
 
 const Confetti = (() => {
-    const colors = ["#b0915a", "#c9ad74", "#dcc9a2", "#efe2c6", "#fffdf9", "#8f7442"];
+    const colors = ["#c9a86a", "#e6cc8f", "#f6e7c1", "#fffdf9", "#b8924f", "#9d8fd0"];
     let canvas = null;
     let pieces = [];
     let running = false;
