@@ -488,6 +488,11 @@ button {
     overflow-wrap: anywhere;
 }
 
+.invite__guest--one-line {
+    white-space: nowrap;
+    overflow-wrap: normal;
+}
+
 .invite .ornament {
     margin: 26px auto 30px;
 }

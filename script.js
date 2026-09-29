@@ -30,6 +30,7 @@ const CONFIG = {
 // Example link: https://your-site.vercel.app/?p=ha-linh
 // `photo` is optional — leave it out to use CONFIG.defaultPhoto.
 // `frame: "rounded"` shows the whole photo with softly rounded corners instead of the arch.
+// `oneLine: true` keeps a long name on one line by shrinking its font to fit the screen.
 const guests = {
     "bon-li-va-em-trang":     { name: "Bôn lì và em Trang",       photo: "images/bon-li-va-em-trang.jpeg" },
     "ha-linh":                { name: "Bạn Hà Linh",              photo: "images/ha-linh.jpeg" },
@@ -38,6 +39,7 @@ const guests = {
     "du-bac-bling":           { name: "Du Bắc Bling",             photo: "images/du-bac-bling.jpeg" },
     "gia-dinh":               { name: "Gia đình",                 photo: "images/gia-dinh.jpeg", frame: "rounded" },
     "me-con-lvy":             { name: "2 mẹ con Ivy",             photo: "images/me-con-lvy.jpeg" },
+    "angela-phuong-trinh":    { name: "Bạn “Angela Phương Trinh”", photo: "images/ban-trinh.jpeg", oneLine: true },
     "em-huyen":               { name: "Em Huyền" },
     "em-nhi":                 { name: "Em Nhi" }
 };
@@ -62,12 +64,34 @@ function getGuest() {
         known,
         name: entry.name || CONFIG.defaultGuest,
         photo: entry.photo || CONFIG.defaultPhoto,
-        frame: entry.frame || "arch"
+        frame: entry.frame || "arch",
+        oneLine: entry.oneLine === true
     };
 }
 
+// Shrink the guest name's font just enough to fit on one line
+function fitOneLine(el) {
+    el.style.fontSize = "";
+    const available = el.clientWidth;
+    const needed = el.scrollWidth;
+    if (needed > available) {
+        const size = parseFloat(getComputedStyle(el).fontSize);
+        el.style.fontSize = `${Math.floor(size * (available / needed) * 0.97)}px`;
+    }
+}
+
 function applyGuest(guest) {
-    $("#guest-name").textContent = guest.name;
+    const nameEl = $("#guest-name");
+    nameEl.textContent = guest.name;
+
+    if (guest.oneLine) {
+        nameEl.classList.add("invite__guest--one-line");
+        const fit = () => fitOneLine(nameEl);
+        fit();
+        // Refit once the web font has loaded and whenever the screen size changes
+        if (document.fonts) document.fonts.ready.then(fit);
+        window.addEventListener("resize", fit);
+    }
 
     // Guest photo in the arch; fall back to the default photo if it fails to load
     const photo = $("#hero-photo");
